@@ -27,6 +27,7 @@ const Results = () => {
       setPage(+page);
       dispatch(fetchRepForks(repository));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const columns = [
