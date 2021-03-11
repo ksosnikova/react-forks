@@ -7,7 +7,6 @@ import { DataGrid } from '@material-ui/data-grid';
 import { fetchRepForks } from '../../store/forks/operations';
 import { setFavorites } from '../../store/favorites/actions';
 import { selectFavorites } from '../../store/favorites/selectors';
-// import db from '../../firebase.js'
 
 const Results = () => {
 
@@ -29,12 +28,6 @@ const Results = () => {
       dispatch(fetchRepForks(repository));
     }
   }, []);
-
-  // useEffect(() => {
-  //   db.on('value', (snapshot) => {
-  //     const values = Object.values(snapshot.val());
-  //   })
-  // }, []);
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 50 },
