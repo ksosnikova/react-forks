@@ -7,13 +7,17 @@ import storage from 'redux-persist/lib/storage';
 import { MODULE_NAME as forksModuleName } from './forks/selectors';
 import { reducer as forksReducer } from './forks/reducer';
 
-const persistForks = {
-  key: 'forks',
+import { MODULE_NAME as favoriteModuleName } from './favorites/selectors';
+import { reducer as favoriteReducer } from './favorites/reducer';
+
+const persistFavorite = {
+  key: 'favorite',
   storage
 }
 
 const rootReducer = combineReducers({
-  [forksModuleName]: persistReducer(persistForks, forksReducer)
+  [forksModuleName]: forksReducer,
+  [favoriteModuleName]: persistReducer(persistFavorite, favoriteReducer)
 });
 
 export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));

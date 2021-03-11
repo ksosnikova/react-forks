@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { fetchRepForks } from '../../store/forks/operations';
-import { Container, Heading, SearchContainer, Input, SearchBtn } from './StyledSearch';
+import { Button, Input, Typography, Box } from '@material-ui/core';
 
 const Search = () => {
 
@@ -18,15 +18,17 @@ const Search = () => {
   }
 
   return (
-    <>
-      <Container>
-        <Heading>Let's check GitHub forks repos</Heading>
-        <SearchContainer>
-            <Input value={value} onChange={handleChange}></Input>
-            <SearchBtn onClick={handleSearch}>Search</SearchBtn>
-        </SearchContainer>
-      </Container>
-    </>
+    <Box display='flex'
+      flexDirection='column'
+      justifyContent='center'
+      alignItems='center'
+      height={600}>
+      <Typography variant='h3'>Let's check GitHub forks repos</Typography>
+      <Box m="auto">
+        <Input value={value} onChange={handleChange}></Input>
+        <Button onClick={handleSearch} variant="contained" color="primary"> Search</Button>
+      </Box>
+    </Box>
   )
 };
 
