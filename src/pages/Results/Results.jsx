@@ -1,88 +1,95 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectForks, selectLoader } from '../../store/forks/selectors';
-import { CircularProgress, Box } from '@material-ui/core';
-import { DataGrid } from '@material-ui/data-grid';
+import { selectForks, selectLoader, selectRepo, selectTotalPages } from '../../store/forks/selectors';
 import { fetchRepForks } from '../../store/forks/operations';
-import { setFavorites } from '../../store/favorites/actions';
-import { selectFavorites } from '../../store/favorites/selectors';
+import { FaStar, FaRegStar } from 'react-icons/fa';
+import { GrNext, GrPrevious } from 'react-icons/gr';
+import database from '../../firebase';
 
 const Results = () => {
 
-  const [page, setPage] = useState(0);
-
+  const [fav, setFav] = useState([]);
+  const history = useHistory();
   const dispatch = useDispatch();
+
+  const totalPages = useSelector(selectTotalPages);
   const dataForks = useSelector(selectForks);
   const loading = useSelector(selectLoader);
-  const favorites = useSelector(selectFavorites);
+  const repo = useSelector(selectRepo);
 
   const { search } = useLocation();
+  const params = new URLSearchParams(search);
+  let page = +params.get('page');
+  const repository = params.get('repository');
 
   useEffect(() => {
-    const params = new URLSearchParams(search);
-    const page = params.get('page');
-    const repository = params.get('repository');
-    if (page && repository && !dataForks.length) {
-      setPage(+page);
-      dispatch(fetchRepForks(repository));
+    if (page && repository) {
+      dispatch(fetchRepForks(repository, page));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const columns = [
-    { field: 'id', headerName: 'ID', width: 50 },
-    { field: 'repoName', headerName: 'Repo Name', width: 170 },
-    { field: 'owner', headerName: 'Owner', width: 130 },
-    { field: 'starCount', headerName: 'Star Count', width: 50, },
-    { field: 'clone', headerName: 'RepLink', width: 350 },
-  ];
+  useEffect(() => {
+    const db = database.ref('favorites');
+    db.on('value', async (snapshot) => {
+      const dbFavorites = await snapshot.val();
+      setFav([...Object.values(dbFavorites)]);
+    })
+  }, [])
 
-  const rows = dataForks.reduce(
-    (data, { id, full_name, stargazers_count, clone_url, owner: { login } }, index) =>
-      [...data, {
-        id: index + 1,
-        repoName: full_name,
-        owner: login,
-        starCount: stargazers_count,
-        clone: clone_url,
-      }], []);
-
-  const indexToID = (arrayIndex) => {
-    return dataForks.length ? arrayIndex.map(index => dataForks[index - 1]?.id) : [];
-  };
-
-  const idToIndex = (arrayIds) => {
-    return arrayIds.map(id => dataForks.findIndex(fork => fork.id === id) + 1);
-  };
+  const handlePage = (inc) => {
+    (inc === 1 ? page-- : page++);
+    dispatch(fetchRepForks(repo, page));
+    history.push(`/results/?page=${page}&repository=${repository}`);
+  }
 
   return (
-    <Box
-      display='flex'
-      flexDirection='column'
-      justifyContent='center'
-      alignItems='center'
-      height='100vh'>
-      {loading ? <CircularProgress /> :
-        <div style={{ height: '95%', width: '100%' }}>
-          <DataGrid
-            checkboxSelection
-            page={page}
-            onPageChange={(params) => { setPage(params.page) }}
-            pageSize={10}
-            pagination
-            rows={rows}
-            columns={columns}
-            onSelectionModelChange={(newFavorite) => {
-              const favIds = indexToID(newFavorite.selectionModel);
-              const filtered = favIds.filter(Boolean);
-              if (filtered.length) dispatch(setFavorites(filtered));
-            }
-            }
-            selectionModel={idToIndex(favorites)}
-          />
-        </div>}
-    </Box>
+    <div className='results'>
+      { loading ? <div className='spinner-border'></div> : (
+        <>
+          { !dataForks.length > 0 ? 'No data for this search' :
+            <>
+              <h3 className='results__title'>search results</h3>
+              <div className='results__container'>
+                <table className='results__table table table-striped'>
+                  <thead>
+                    <tr>
+                      <th>Repository</th>
+                      <th>Owner</th>
+                      <th>Star Count</th>
+                      <th>Repository link</th>
+                      <th>Favorite</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dataForks.map(repository => (
+                      <tr key={repository.id}>
+                        <td>{repository.full_name}</td>
+                        <td>{repository.owner.login}</td>
+                        <td>{repository.stargazers_count}</td>
+                        <td><a href={repository.clone_url}>{repository.clone_url}</a></td>
+                        <td>{
+                          fav?.find(favItemId => favItemId === repository.id) ?
+                            <span className='favorite-icon' onClick={() => database.ref('favorites/' + repository.id).remove()}><FaStar /></span>
+                            :
+                            <span className='favorite-icon' onClick={() => database.ref('favorites/' + repository.id).set(repository.id)}><FaRegStar /></span>
+                        }</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className='resultPagination'>
+                <span className='pagination pagination__arrows' onClick={() => handlePage(1)}>{page === 1 ? null : <GrPrevious />}</span>
+                <span className='pagination__page'>page {page} of {totalPages}</span>
+                <span className='pagination pagination__arrows' onClick={() => handlePage()}>{page === totalPages ? null : <GrNext />}</span>
+              </div>
+            </>
+          }
+        </>
+      )}
+    </div>
   )
 };
 

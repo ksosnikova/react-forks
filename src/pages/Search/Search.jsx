@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { fetchRepForks } from '../../store/forks/operations';
-import { Button, Input, Typography, Box } from '@material-ui/core';
 
 const Search = () => {
 
@@ -14,21 +13,19 @@ const Search = () => {
 
   const handleSearch = () => {
     dispatch(fetchRepForks(value));
-    history.push('/results')
+    history.push(`/results/?page=1&repository=${value}`)
   }
 
   return (
-    <Box display='flex'
-      flexDirection='column'
-      justifyContent='center'
-      alignItems='center'
-      height={600}>
-      <Typography variant='h3'>Let's check GitHub forks repos</Typography>
-      <Box m="auto">
-        <Input value={value} onChange={handleChange}></Input>
-        <Button onClick={handleSearch} variant="contained" color="primary"> Search</Button>
-      </Box>
-    </Box>
+    <div className='search-container'>
+      <div className="search-container-inner">
+        <h3 className='search-title'>Search for Repo</h3>
+        <div className='search-box'>
+          <input value={value} onChange={handleChange} className="form-control" />
+          <button className='btn btn-primary' onClick={handleSearch}>Search</button>
+        </div>
+      </div>
+    </div>
   )
 };
 

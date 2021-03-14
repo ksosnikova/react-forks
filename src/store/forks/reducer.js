@@ -2,7 +2,10 @@ import { FETCH_FORKS, SET_LOADER } from "./types";
 
 const InitialState = {
   forks: [],
-  isDataLoaded: false
+  isDataLoaded: false,
+  repo: null,
+  totalPages: null,
+  errors: null
 };
 
 export function reducer(state = InitialState, { type, payload }) {
@@ -10,19 +13,16 @@ export function reducer(state = InitialState, { type, payload }) {
     case SET_LOADER:
       return {
         ...state,
-        isDataLoaded: true
+        isDataLoaded: payload
       }
     case FETCH_FORKS:
       return {
         ...state,
-        forks: payload,
-        isDataLoaded: false
+        forks: payload.data,
+        repo: payload.linkToGitRep,
+        isDataLoaded: false,
+        totalPages: payload.pagesTotal
       }
-    // case SET_FAVORITES:
-    //   return {
-    //     ...state,
-    //     favorites: payload
-    //   }
     default:
       return state;
   }

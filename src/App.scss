@@ -1,0 +1,33 @@
+@import './pages/Results/stylesResults';
+@import './pages/Search/styleSearch';
+
+#root {
+  min-height: 100%;
+}
+
+button, input, optgroup, select, textarea {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+button, input, optgroup, select, textarea {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+
+  &:hover {
+    color: #0069d9;
+  }
+}
+
+.favorite-icon {
+  color: orange;
+}

@@ -5,7 +5,9 @@ export const fetchForks = (payload) => ({
   payload
 });
 
-export const setLoader = () => ({
-  type: SET_LOADER
+export const setLoader = (payload) => ({
+  type: SET_LOADER,
+  payload
 });
+
 
