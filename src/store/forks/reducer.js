@@ -5,7 +5,7 @@ const InitialState = {
   isDataLoaded: false,
   owner: null,
   repository: null,
-  totalPages: null,
+  lastPage: false,
   errors: null
 };
 
@@ -23,7 +23,7 @@ export function reducer(state = InitialState, { type, payload }) {
         owner: payload.owner,
         repository: payload.repository,
         isDataLoaded: false,
-        totalPages: payload.pagesTotal
+        lastPage: payload.lastPage
       }
     default:
       return state;

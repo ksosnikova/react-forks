@@ -4,12 +4,11 @@ import axios from 'axios';
 export const fetchRepForks = (owner, repository, page) => async dispatch => {
   try {
     dispatch(setLoader(true));
-    const dataForks = await axios.get(`https://api.github.com/repos/${owner}/${repository}`);
-    const forksCount = dataForks.data.forks_count;
     const { status, data } = await axios.get(`https://api.github.com/repos/${owner}/${repository}/forks?per_page=10&page=${page}`);
-    const pagesTotal = Math.ceil(forksCount / 10);
+    const dataForLastPage = await axios.get(`https://api.github.com/repos/${owner}/${repository}/forks?per_page=10&page=${++page}`);
+    const lastPage = dataForLastPage.data.length > 0;
     if (status === 200) {
-      dispatch(fetchForks({ data, owner, repository, pagesTotal }));
+      dispatch(fetchForks({ data, owner, repository, lastPage }));
     }
   } catch (error) {
     dispatch(setLoader(false));
