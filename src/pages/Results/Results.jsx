@@ -13,7 +13,6 @@ const Results = () => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  // const totalPages = useSelector(selectTotalPages);
   const dataForks = useSelector(selectForks);
   const loading = useSelector(selectLoader);
   const lastPage = useSelector(selectLastPage);
@@ -25,7 +24,7 @@ const Results = () => {
   const repository = params.get('repository');
 
   useEffect(() => {
-    if (page && repository) {
+    if (page && repository && owner) {
       dispatch(fetchRepForks(owner, repository, page));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
