@@ -3,7 +3,8 @@ import { FETCH_FORKS, SET_LOADER } from "./types";
 const InitialState = {
   forks: [],
   isDataLoaded: false,
-  repo: null,
+  owner: null,
+  repository: null,
   totalPages: null,
   errors: null
 };
@@ -19,7 +20,8 @@ export function reducer(state = InitialState, { type, payload }) {
       return {
         ...state,
         forks: payload.data,
-        repo: payload.linkToGitRep,
+        owner: payload.owner,
+        repository: payload.repository,
         isDataLoaded: false,
         totalPages: payload.pagesTotal
       }

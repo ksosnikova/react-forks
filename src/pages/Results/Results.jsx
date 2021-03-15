@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectForks, selectLoader, selectRepo, selectTotalPages } from '../../store/forks/selectors';
+import { selectForks, selectLoader, selectTotalPages } from '../../store/forks/selectors';
 import { fetchRepForks } from '../../store/forks/operations';
 import { FaStar, FaRegStar } from 'react-icons/fa';
 import { GrNext, GrPrevious } from 'react-icons/gr';
@@ -16,16 +16,16 @@ const Results = () => {
   const totalPages = useSelector(selectTotalPages);
   const dataForks = useSelector(selectForks);
   const loading = useSelector(selectLoader);
-  const repo = useSelector(selectRepo);
-
+  
   const { search } = useLocation();
   const params = new URLSearchParams(search);
   let page = +params.get('page');
+  const owner = params.get('owner');
   const repository = params.get('repository');
 
   useEffect(() => {
     if (page && repository) {
-      dispatch(fetchRepForks(repository, page));
+      dispatch(fetchRepForks(owner, repository, page));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -40,8 +40,8 @@ const Results = () => {
 
   const handlePage = (inc) => {
     (inc === 1 ? page-- : page++);
-    dispatch(fetchRepForks(repo, page));
-    history.push(`/results/?page=${page}&repository=${repository}`);
+    history.push(`/results/?page=${page}&owner=${owner}&repository=${repository}`);
+    dispatch(fetchRepForks(owner, repository, page));
   }
 
   return (
