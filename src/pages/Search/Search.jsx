@@ -12,8 +12,7 @@ const Search = () => {
   const handleChange = e => setValue(e.target.value);
 
   const handleSearch = () => {
-    const owner = value.split('/')[0];
-    const repository = value.split('/')[1];
+    const [owner, repository] = value.split('/');
     dispatch(fetchRepForks(owner, repository));
     history.push(`/results/?page=1&owner=${owner}&repository=${repository}`)
   }

@@ -39,8 +39,7 @@ const Results = () => {
   }, [])
 
   const handlePage = (inc) => {
-    (inc === 1 ? page-- : page++);
-    history.push(`/results/?page=${page}&owner=${owner}&repository=${repository}`);
+    history.push(`/results/?page=${page+inc}&owner=${owner}&repository=${repository}`);
     dispatch(fetchRepForks(owner, repository, page));
   }
 
@@ -81,9 +80,9 @@ const Results = () => {
                 </table>
               </div>
               <div className='resultPagination'>
-                { !(page === 1) && <span className='pagination pagination__arrows' onClick={() => handlePage(1)}><GrPrevious /></span>}
+                { !(page === 1) && <span className='pagination pagination__arrows' onClick={() => handlePage(-1)}><GrPrevious /></span>}
                 <span className='pagination__page'>page {page} </span>
-                {lastPage && <span className='pagination pagination__arrows' onClick={() => handlePage()}><GrNext /></span>}
+                {lastPage && <span className='pagination pagination__arrows' onClick={() => handlePage(1)}><GrNext /></span>}
               </div>
             </>
           }
