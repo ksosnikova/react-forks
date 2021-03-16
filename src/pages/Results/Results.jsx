@@ -12,7 +12,7 @@ const Results = () => {
   const [fav, setFav] = useState([]);
   const history = useHistory();
   const dispatch = useDispatch();
-
+  
   const dataForks = useSelector(selectForks);
   const loading = useSelector(selectLoader);
   const lastPage = useSelector(selectLastPage);
@@ -27,8 +27,7 @@ const Results = () => {
     if (page && repository && owner) {
       dispatch(fetchRepForks(owner, repository, page));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [ dispatch, owner, repository, page]);
 
   useEffect(() => {
     const db = database.ref('favorites');
@@ -39,7 +38,7 @@ const Results = () => {
   }, [])
 
   const handlePage = (inc) => {
-    history.push(`/results/?page=${page+inc}&owner=${owner}&repository=${repository}`);
+    history.push(`/results/?page=${page=page+inc}&owner=${owner}&repository=${repository}`);
     dispatch(fetchRepForks(owner, repository, page));
   }
 
@@ -82,7 +81,7 @@ const Results = () => {
               <div className='resultPagination'>
                 { !(page === 1) && <span className='pagination pagination__arrows' onClick={() => handlePage(-1)}><GrPrevious /></span>}
                 <span className='pagination__page'>page {page} </span>
-                {lastPage && <span className='pagination pagination__arrows' onClick={() => handlePage(1)}><GrNext /></span>}
+                {!lastPage && <span className='pagination pagination__arrows' onClick={() => handlePage(1)}><GrNext /></span>}
               </div>
             </>
           }
